@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/PacketSales.css";
 import "../styles/EmployeeWorkflow.css";
 import { getImageUrl } from "../utils/image";
-import { MdOutlineInfo, MdCheck, MdRefresh, MdOutlineLocalShipping } from "react-icons/md";
+import { MdOutlineInfo, MdCheck, MdRefresh } from "react-icons/md";
 
 const PacketSales: React.FC = () => {
   const [packets, setPackets] = useState<any[]>([]);
@@ -10,9 +10,6 @@ const PacketSales: React.FC = () => {
   const [selectedPacket, setSelectedPacket] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
   const [qty, setQty] = useState<number>(0);
-  const [customerName, setCustomerName] = useState("");
-  const [invoiceNo, setInvoiceNo] = useState("");
-  const [remarks, setRemarks] = useState("");
   const [entryBy, setEntryBy] = useState(() => localStorage.getItem("username") || "RISHI KUMAR (OP-0147)");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"entry" | "list">("entry");
@@ -20,14 +17,6 @@ const PacketSales: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" | "" }>({
     text: "",
     type: "",
-  });
-
-  const [dispatchDate, setDispatchDate] = useState(() => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
   });
 
   // 🧭 Load packet stock + sales
@@ -64,8 +53,8 @@ const PacketSales: React.FC = () => {
       showMessage("⚠️ Please select a packet and enter valid quantity!", "error");
       return;
     }
-    if (!customerName.trim() || !invoiceNo.trim()) {
-      showMessage("⚠️ Please enter customer name and invoice reference number!", "error");
+    if (!entryBy.trim()) {
+      showMessage("⚠️ Please select an operator name!", "error");
       return;
     }
     if (!isStockAvailable) {
@@ -75,12 +64,10 @@ const PacketSales: React.FC = () => {
 
     setLoading(true);
     try {
-      // Concatenate fields into sold_to string to match legacy schema
-      const combinedSoldTo = `${customerName.trim()} | ${invoiceNo.trim()}${remarks.trim() ? ` | ${remarks.trim()}` : ""}`;
       const res = await (window as any).electronAPI.savePacketSale?.({
         packet_code: selectedPacket,
         qty,
-        sold_to: combinedSoldTo,
+        sold_to: "N/A", // Customer info removed by user request
         entry_by: entryBy || "User",
       });
 
@@ -114,22 +101,13 @@ const PacketSales: React.FC = () => {
     setSelectedPacket("");
     setSelectedGroup("");
     setQty(0);
-    setCustomerName("");
-    setInvoiceNo("");
-    setRemarks("");
     setEntryBy(localStorage.getItem("username") || "RISHI KUMAR (OP-0147)");
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    setDispatchDate(`${yyyy}-${mm}-${dd}`);
   };
 
   const getCurrentStep = () => {
     if (!selectedPacket) return 1;
     if (!isStockAvailable) return 2;
-    if (!customerName.trim() || !invoiceNo.trim()) return 3;
-    return 4;
+    return 3;
   };
 
   const currentStep = getCurrentStep();
@@ -144,25 +122,14 @@ const PacketSales: React.FC = () => {
     {
       num: 2,
       title: "Confirm Stock",
-      desc: "Check availability",
+      desc: "Check availability & qty",
       done: !!selectedPacket && isStockAvailable,
     },
     {
       num: 3,
-      title: "Customer Details",
-      desc: "Enter dispatch information",
-      done: !!selectedPacket && isStockAvailable && !!customerName.trim() && !!invoiceNo.trim(),
-    },
-    {
-      num: 4,
       title: "Complete Sale",
-      desc: "Review & finish",
-      done:
-        !!selectedPacket &&
-        isStockAvailable &&
-        !!customerName.trim() &&
-        !!invoiceNo.trim() &&
-        !!entryBy.trim(),
+      desc: "Select operator & dispatch",
+      done: !!selectedPacket && isStockAvailable && !!entryBy.trim(),
     },
   ];
 
@@ -186,7 +153,7 @@ const PacketSales: React.FC = () => {
           </div>
           <div>
             <h1>Rattle Packet Dispatch & Sale</h1>
-            <p>Select ready packets, enter customer details and complete dispatch.</p>
+            <p>Select ready packets, enter operator details and complete dispatch.</p>
           </div>
         </div>
         <button
@@ -371,46 +338,15 @@ const PacketSales: React.FC = () => {
               </div>
             </div>
 
-            {/* Panel 2: Customer / Dispatch details */}
+            {/* Panel 2: Operator Details */}
             <div className="dispatch-card">
               <div className="card-header">
-                <h3>Customer / Dispatch Information</h3>
+                <h3>Operator Information</h3>
               </div>
               <div className="card-body">
-                <div className="dispatch-form-grid">
+                <div className="dispatch-form-grid" style={{ gridTemplateColumns: "1fr" }}>
                   <div className="dispatch-field-group">
-                    <label>Customer Name *</label>
-                    <input
-                      type="text"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Enter customer name"
-                      required
-                    />
-                  </div>
-
-                  <div className="dispatch-field-group">
-                    <label>Dispatch Reference / Invoice No. *</label>
-                    <input
-                      type="text"
-                      value={invoiceNo}
-                      onChange={(e) => setInvoiceNo(e.target.value)}
-                      placeholder="e.g. INV-0706-0152"
-                      required
-                    />
-                  </div>
-
-                  <div className="dispatch-field-group">
-                    <label>Dispatch Date</label>
-                    <input
-                      type="date"
-                      value={dispatchDate}
-                      onChange={(e) => setDispatchDate(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="dispatch-field-group">
-                    <label>Operator *</label>
+                    <label>Operator Name *</label>
                     <select
                       value={entryBy}
                       onChange={(e) => setEntryBy(e.target.value)}
@@ -428,17 +364,7 @@ const PacketSales: React.FC = () => {
                     </select>
                   </div>
 
-                  <div className="dispatch-field-group" style={{ gridColumn: "span 2" }}>
-                    <label>Remarks (Optional)</label>
-                    <input
-                      type="text"
-                      value={remarks}
-                      onChange={(e) => setRemarks(e.target.value)}
-                      placeholder="e.g. Urgent dispatch"
-                    />
-                  </div>
-
-                  <div className="fifo-callout">
+                  <div className="fifo-callout" style={{ gridColumn: "span 1" }}>
                     <MdOutlineInfo style={{ fontSize: "16px", flexShrink: 0 }} />
                     <span>FIFO will be applied automatically. Oldest packets will be dispatched first.</span>
                   </div>
@@ -495,15 +421,9 @@ const PacketSales: React.FC = () => {
                     </strong>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", paddingBottom: "6px" }}>
-                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Customer</span>
+                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Operator</span>
                     <span style={{ fontSize: "12.5px", color: "#334155", fontWeight: 500 }}>
-                      {customerName || "—"}
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", paddingBottom: "6px" }}>
-                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Dispatch Ref / Invoice</span>
-                    <span style={{ fontSize: "12px", fontFamily: "monospace", color: "#475569", fontWeight: 600 }}>
-                      {invoiceNo || "—"}
+                      {entryBy || "—"}
                     </span>
                   </div>
                 </div>
@@ -553,7 +473,7 @@ const PacketSales: React.FC = () => {
                 <button
                   className="btn btn-save"
                   onClick={handleSave}
-                  disabled={loading || !selectedPacket || qty <= 0 || !customerName.trim() || !invoiceNo.trim() || !isStockAvailable}
+                  disabled={loading || !selectedPacket || qty <= 0 || !entryBy.trim() || !isStockAvailable}
                 >
                   <MdCheck style={{ fontSize: "18px" }} />
                   {loading ? "Processing..." : "Complete Dispatch"}
