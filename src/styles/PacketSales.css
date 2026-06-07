@@ -1,0 +1,634 @@
+/* employee/src/styles/PacketSales.css - Premium sales workflow styling */
+
+.packet-sales-container {
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Page Header */
+.packet-dispatch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 18px;
+}
+
+.header-brand-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-badge-sales {
+  font-size: 32px;
+  background: #fdf2f0;
+  border: 1px solid #fca5a5;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+}
+
+.header-brand-block h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.header-brand-block p {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.history-toggle-btn-sales {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.history-toggle-btn-sales:hover {
+  background: #1e293b;
+}
+
+/* Layout Grid */
+.packet-dispatch-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* 1. Stepper */
+.dispatch-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.stepper-step-sales {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.stepper-step-sales.active {
+  background: #fff7ed;
+  border: 1.5px solid #ffedd5;
+}
+
+.stepper-step-sales:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 48px;
+  bottom: -22px;
+  border-left: 1.5px dashed #cbd5e1;
+  z-index: 0;
+}
+
+.step-circle-sales {
+  position: relative;
+  z-index: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #64748b;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.stepper-step-sales.active .step-circle-sales {
+  border-color: #ea580c;
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.stepper-step-sales.completed .step-circle-sales {
+  border-color: #0d9488;
+  background: #0d9488;
+  color: #ffffff;
+}
+
+.step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.step-text strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.stepper-step-sales.active .step-text strong {
+  color: #c2410c;
+}
+
+.step-text small {
+  font-size: 10.5px;
+  color: #64748b;
+}
+
+/* 2. Middle Main Cards */
+.dispatch-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dispatch-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dispatch-card .card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+}
+
+.dispatch-card .card-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+  margin: 0;
+}
+
+.dispatch-card .card-body {
+  padding: 20px;
+  flex: 1;
+}
+
+.dispatch-card .card-footer {
+  padding: 12px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  text-align: right;
+}
+
+/* Grid form */
+.dispatch-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.dispatch-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dispatch-field-group label {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: #475569;
+}
+
+.dispatch-field-group input,
+.dispatch-field-group select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: #1e293b;
+  background-color: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.dispatch-field-group input:focus,
+.dispatch-field-group select:focus {
+  border-color: #ea580c;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+}
+
+.dispatch-field-group input:disabled,
+.dispatch-field-group select:disabled {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.fifo-callout {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #c2410c;
+}
+
+/* Selected packet visual in sales */
+.selected-sales-visual {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.sales-visual-box {
+  width: 110px;
+  height: 110px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.sales-visual-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.sales-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.sales-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  border-bottom: 1px solid #f8fafc;
+  padding-bottom: 4px;
+}
+
+.sales-info-label {
+  color: #64748b;
+}
+
+.sales-info-val {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.stock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.qty-stepper-sales-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 14px;
+  border-radius: 8px;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.qty-stepper-sales-panel label {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: #475569;
+  text-align: center;
+}
+
+.sales-change-btn {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sales-change-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* 3. Live Dispatch Ticket */
+.dispatch-ticket-column {
+  position: sticky;
+  top: 24px;
+}
+
+.dispatch-ticket {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dispatch-ticket .ticket-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.dispatch-ticket .ticket-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1e293b;
+  margin: 0;
+}
+
+.ticket-status-sales {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ticket-status-sales.draft {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.ticket-status-sales.ready {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.ticket-status-sales.warning {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.dispatch-ticket .ticket-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ticket-visual-preview-sales {
+  width: 100%;
+  height: 140px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+
+.ticket-visual-preview-sales img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.remaining-stock-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.remaining-stock-box .label {
+  font-size: 10.5px;
+  color: #15803d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.remaining-stock-box .val {
+  font-size: 18px;
+  font-weight: 750;
+  color: #166534;
+}
+
+.remaining-stock-box.out {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.remaining-stock-box.out .label {
+  color: #b91c1c;
+}
+
+.remaining-stock-box.out .val {
+  color: #991b1b;
+}
+
+.ticket-actions-sales {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-actions-sales .btn {
+  height: 44px;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ticket-actions-sales .btn-save {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.ticket-actions-sales .btn-save:hover:not(:disabled) {
+  background: #c2410c;
+}
+
+.ticket-actions-sales .btn-save:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.ticket-actions-sales .btn-reset {
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.ticket-actions-sales .btn-reset:hover {
+  background: #f1f5f9;
+}
+
+/* 4. Recent Dispatch Ledger (Bottom of page) */
+.dispatch-recent-ledger {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  margin-top: 10px;
+}
+
+.ledger-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.ledger-head h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #1e293b;
+}
+
+.ledger-head p {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.view-history-link-sales {
+  background: transparent;
+  border: none;
+  color: #ea580c;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.view-history-link-sales:hover {
+  color: #c2410c;
+  text-decoration: underline;
+}
+
+.ledger-scroll {
+  overflow-x: auto;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1200px) {
+  .packet-dispatch-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .dispatch-stepper {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 16px;
+  }
+  
+  .stepper-step-sales {
+    flex-shrink: 0;
+    min-width: 180px;
+  }
+  
+  .stepper-step-sales:not(:last-child)::after {
+    display: none;
+  }
+  
+  .dispatch-ticket-column {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .dispatch-form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .selected-sales-visual {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .qty-stepper-sales-panel {
+    width: 100%;
+  }
+  
+  .packet-dispatch-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .history-toggle-btn-sales {
+    width: 100%;
+    text-align: center;
+  }
+}
