@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/PacketProduction.css";
+import "../styles/EmployeeWorkflow.css";
 import { getImageUrl } from "../utils/image";
 
 const PacketSales: React.FC = () => {

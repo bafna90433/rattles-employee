@@ -9,6 +9,7 @@ import PacketProduction from "./pages/PacketProduction";
 import PacketProductionEntries from "./pages/PacketProductionEntries";
 import ProductionList from "./pages/ProductionList";
 import PacketSales from "./pages/PacketSales";
+import EmployeeDashboard from "./pages/EmployeeDashboard";
 
 // 🔐 Login
 import EmployeeLogin from "./pages/EmployeeLogin";
@@ -37,6 +38,7 @@ const App: React.FC = () => {
             <ProtectedRoute allowedRoles={["employee"]}>
               <Layout>
                 <Routes>
+                  <Route path="dashboard" element={<EmployeeDashboard />} />
                   <Route path="raw-add" element={<RawMaterialEntry />} />
                   <Route path="packet-production" element={<PacketProduction />} />
                   <Route path="packet-production-entries" element={<PacketProductionEntries />} />

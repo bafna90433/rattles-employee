@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/PacketProduction.css";
+import "../styles/EmployeeWorkflow.css";
 import { getImageUrl } from "../utils/image";
 
 const PacketProduction: React.FC = () => {
@@ -63,31 +64,29 @@ const PacketProduction: React.FC = () => {
       return;
     }
 
-    await (window as any).electronAPI.savePacketProduction?.({
-      packet_code: selectedPacket,
-      group_name: selectedGroup,
-      qty,
-      entry_by: entryBy,
-      date: new Date().toISOString(),
-    });
+    try {
+      await (window as any).electronAPI.savePacketProduction?.({
+        packet_code: selectedPacket,
+        group_name: selectedGroup,
+        qty,
+        entry_by: entryBy,
+        date: new Date().toISOString(),
+      });
 
-    await (window as any).electronAPI.updateProductStockByPacket?.({
-      packet_code: selectedPacket,
-      qty: -qty,
-    });
+      alert("Packet production saved and product stock deducted!");
 
-    alert("✅ Packet Production Saved & Stock Updated!");
+      setSelectedPacket("");
+      setSelectedGroup("");
+      setGroupImage("");
+      setQty(0);
+      setEntryBy("");
 
-    // Reset
-    setSelectedPacket("");
-    setSelectedGroup("");
-    setGroupImage("");
-    setQty(0);
-    setEntryBy("");
-
-    const e = await (window as any).electronAPI.getPacketProductions?.();
-    setEntries(e || []);
-    setActiveTab("list");
+      const e = await (window as any).electronAPI.getPacketProductions?.();
+      setEntries(e || []);
+      setActiveTab("list");
+    } catch (error: any) {
+      alert(error?.response?.data?.error || error?.message || "Packet production failed");
+    }
   };
 
   const resetForm = () => {

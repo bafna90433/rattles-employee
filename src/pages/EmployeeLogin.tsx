@@ -18,7 +18,7 @@ const EmployeeLogin: React.FC = () => {
       if (res.success) {
         localStorage.setItem("role", "employee");
         alert("✅ Login successful!");
-        navigate("/employee/raw-add");
+        navigate("/employee/dashboard");
       } else {
         alert(res.message || "❌ Invalid credentials");
       }

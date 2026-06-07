@@ -1,5 +1,7 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import "../styles/RawMaterialEntry.css";
+import "../styles/EmployeeWorkflow.css";
+import "../styles/RawMaterialReference.css";
 import { convertToWebP } from "../utils/webp";
 import { getImageUrl } from "../utils/image";
 
@@ -189,6 +191,13 @@ const RawMaterialEntry: React.FC = () => {
 
   return (
     <div className="raw-material-container">
+      <div className="intake-page-title">
+        <span>RM</span>
+        <div>
+          <h1>Raw Material Intake</h1>
+          <p>Record incoming rattle toy materials and component parts.</p>
+        </div>
+      </div>
       <h2>🏗️ Raw Material Entry</h2>
 
       {/* 🔀 Tabs */}
@@ -210,6 +219,19 @@ const RawMaterialEntry: React.FC = () => {
       {/* 🧾 Entry Form Dashboard */}
       {activeTab === "entry" && (
         <div className="entry-dashboard">
+          <aside className="intake-stepper">
+            {[
+              ["1", "Select Rattle Product", "Choose the rattle product"],
+              ["2", "Select Component Part", "Choose the part / item"],
+              ["3", "Material Color & Photo", "Enter color and upload image"],
+              ["4", "Quantity & Operator", "Enter quantity and operator"],
+            ].map((step, index) => (
+              <div className={`intake-step ${index === 0 ? "active" : ""}`} key={step[0]}>
+                <b>{step[0]}</b>
+                <div><strong>{step[1]}</strong><small>{step[2]}</small></div>
+              </div>
+            ))}
+          </aside>
           {/* Left Column: Form Section */}
           <div className="form-column">
             {/* Flat Section 1: Product & Part Selector */}
@@ -431,6 +453,34 @@ const RawMaterialEntry: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "entry" && (
+        <div className="intake-recent-ledger">
+          <div className="intake-ledger-head">
+            <div><strong>Recent Material Intake Entries</strong><small>Latest stock-added records</small></div>
+            <button onClick={() => setActiveTab("list")}>View All Entries</button>
+          </div>
+          <div className="intake-ledger-scroll">
+            <table className="product-table">
+              <thead><tr><th>Time</th><th>Product</th><th>Part / Item</th><th>Color</th><th>Qty</th><th>Entered By</th><th>Image</th><th>Status</th></tr></thead>
+              <tbody>
+                {entries.filter((item) => item.quantity >= 0).slice(0, 5).map((item, index) => (
+                  <tr key={item._id || item.id || index}>
+                    <td>{new Date(item.entry_date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</td>
+                    <td>{products.find((p) => String(p._id || p.id || "") === String(item.product_id))?.product_code || "-"}</td>
+                    <td>{item.part_code}</td>
+                    <td>{item.color_code || "-"}{item.color_name ? ` - ${item.color_name}` : ""}</td>
+                    <td><strong>{item.quantity}</strong></td>
+                    <td>{item.entry_by}</td>
+                    <td>{item.color_image ? <img className="intake-ledger-image" src={getImageUrl(item.color_image)} alt="Material" onClick={() => setPreviewModalImg(getImageUrl(item.color_image))} /> : "-"}</td>
+                    <td><span className="intake-saved-status">Saved</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

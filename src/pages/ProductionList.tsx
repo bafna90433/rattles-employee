@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles/ProductionPage.css";
+import "../styles/EmployeeWorkflow.css";
+import "../styles/ProductionReference.css";
+import "../styles/ProductionTabsFix.css";
 import { getImageUrl } from "../utils/image";
 
 interface ComboPart {
@@ -116,6 +119,13 @@ This will reduce raw material stock.`;
 
   return (
     <div className="production-container">
+      <div className="production-page-title">
+        <span>PB</span>
+        <div>
+          <h1>Rattle Product Build</h1>
+          <p>Produce finished rattle toys from approved component combinations.</p>
+        </div>
+      </div>
       <h2>🏭 Production Entries & Logs</h2>
 
       {/* 🔀 Tabs */}
@@ -137,6 +147,19 @@ This will reduce raw material stock.`;
       {/* 🧱 CREATE ENTRY */}
       {activeTab === "entry" && (
         <div className="entry-dashboard">
+          <aside className="production-stepper">
+            {[
+              ["1", "Select Combination", "Choose an approved rattle design"],
+              ["2", "Review Components", "Check required parts and colors"],
+              ["3", "Set Build Quantity", "Enter quantity to produce"],
+              ["4", "Confirm Production", "Record operator and update stock"],
+            ].map((step, index) => (
+              <div className={`production-step ${index === 0 ? "active" : ""}`} key={step[0]}>
+                <b>{step[0]}</b>
+                <div><strong>{step[1]}</strong><small>{step[2]}</small></div>
+              </div>
+            ))}
+          </aside>
           {/* Left Column: Form Section */}
           <div className="form-column">
             {/* Panel 1: Selection (Blue Accent) */}
@@ -291,7 +314,8 @@ This will reduce raw material stock.`;
         </div>
       )}
 
-      {/* 📋 LIST VIEW */}
+
+
       {activeTab === "list" && (
         <div className="form-card">
           <h3>📋 Production Logs Table</h3>
