@@ -457,33 +457,7 @@ const RawMaterialEntry: React.FC = () => {
         </div>
       )}
 
-      {activeTab === "entry" && (
-        <div className="intake-recent-ledger">
-          <div className="intake-ledger-head">
-            <div><strong>Recent Material Intake Entries</strong><small>Latest stock-added records</small></div>
-            <button onClick={() => setActiveTab("list")}>View All Entries</button>
-          </div>
-          <div className="intake-ledger-scroll">
-            <table className="product-table">
-              <thead><tr><th>Time</th><th>Product</th><th>Part / Item</th><th>Color</th><th>Qty</th><th>Entered By</th><th>Image</th><th>Status</th></tr></thead>
-              <tbody>
-                {entries.filter((item) => item.quantity >= 0).slice(0, 5).map((item, index) => (
-                  <tr key={item._id || item.id || index}>
-                    <td>{new Date(item.entry_date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</td>
-                    <td>{products.find((p) => String(p._id || p.id || "") === String(item.product_id))?.product_code || "-"}</td>
-                    <td>{item.part_code}</td>
-                    <td>{item.color_code || "-"}{item.color_name ? ` - ${item.color_name}` : ""}</td>
-                    <td><strong>{item.quantity}</strong></td>
-                    <td>{item.entry_by}</td>
-                    <td>{item.color_image ? <img className="intake-ledger-image" src={getImageUrl(item.color_image)} alt="Material" onClick={() => setPreviewModalImg(getImageUrl(item.color_image))} /> : "-"}</td>
-                    <td><span className="intake-saved-status">Saved</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+
 
       {/* 📋 Entries List */}
       {activeTab === "list" && (
