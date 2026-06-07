@@ -393,6 +393,37 @@ const PacketSales: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Bottom Back Button */}
+            <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-start" }}>
+              <button
+                onClick={() => navigate("/employee/dashboard")}
+                style={{
+                  background: "transparent",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  padding: "10px 18px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "13.5px",
+                  fontWeight: 600,
+                  color: "#475569",
+                  transition: "all 0.15s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f1f5f9";
+                  e.currentTarget.style.color = "#0f172a";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "#475569";
+                }}
+              >
+                <MdArrowBack /> Back to Dashboard
+              </button>
+            </div>
           </div>
 
           {/* Column 3: Live Dispatch Ticket */}
