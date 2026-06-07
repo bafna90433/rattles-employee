@@ -5,6 +5,7 @@ import { getImageUrl } from "../utils/image";
 interface ComboPart {
   part_code: string;
   color_code?: string;
+  color_name?: string;
   color_image?: string; // base64 real image
 }
 
@@ -97,6 +98,7 @@ This will reduce raw material stock.`;
         product_id: selectedCombo.product_id,
         part_code: part.part_code,
         color_code: part.color_code || "",
+        color_name: part.color_name || "",
         color_image: part.color_image || "",
         quantity: -productionQty,
         entry_by: entryBy,
@@ -249,7 +251,7 @@ This will reduce raw material stock.`;
                       <thead>
                         <tr>
                           <th>Part Code</th>
-                          <th>Color Swatch</th>
+                          <th>Color</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -257,19 +259,10 @@ This will reduce raw material stock.`;
                           <tr key={i}>
                             <td>{p.part_code}</td>
                             <td>
-                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                <span
-                                  style={{
-                                    display: "inline-block",
-                                    backgroundColor: p.color_code,
-                                    width: "14px",
-                                    height: "14px",
-                                    borderRadius: "50%",
-                                    border: "1px solid #cbd5e1",
-                                  }}
-                                ></span>
-                                <code style={{ fontSize: "12px" }}>{p.color_code || "N/A"}</code>
-                              </div>
+                              <code style={{ fontSize: "12px" }}>
+                                {p.color_code || "N/A"}
+                                {p.color_name ? ` (${p.color_name})` : ""}
+                              </code>
                             </td>
                           </tr>
                         ))}

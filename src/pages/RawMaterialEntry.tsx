@@ -23,6 +23,7 @@ interface RawEntry {
   product_id: string;
   part_code: string;
   color_code?: string;
+  color_name?: string;
   color_image?: string;
   quantity: number;
   entry_by: string;
@@ -33,7 +34,6 @@ const RawMaterialEntry: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedPart, setSelectedPart] = useState<Part | null>(null);
   const [entries, setEntries] = useState<any[]>([]);
-  const [colorPreview, setColorPreview] = useState<string>("");
   const [colorImagePreview, setColorImagePreview] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"entry" | "list">("entry");
   const [showMinusOnly, setShowMinusOnly] = useState(false);
@@ -45,6 +45,7 @@ const RawMaterialEntry: React.FC = () => {
     product_id: "",
     part_code: "",
     color_code: "",
+    color_name: "",
     color_image: "",
     quantity: 0,
     entry_by: "",
@@ -77,10 +78,10 @@ const RawMaterialEntry: React.FC = () => {
       product_id: prod ? (prod._id || prod.id || "") : "",
       part_code: "",
       color_code: "",
+      color_name: "",
       color_image: "",
     });
     setColorImagePreview("");
-    setColorPreview("");
   };
 
   // 🧩 Part Select
@@ -93,22 +94,9 @@ const RawMaterialEntry: React.FC = () => {
       ...entry,
       part_code: part?.part_code || "",
       color_code: "",
+      color_name: "",
       color_image: "",
     });
-  };
-
-  // 🎨 Handle Color Change
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const color = e.target.value;
-    setEntry({ ...entry, color_code: color });
-    setColorPreview(color);
-  };
-
-  // ✍️ Handle Manual Color Code
-  const handleManualColor = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const color = e.target.value;
-    setEntry({ ...entry, color_code: color });
-    setColorPreview(color);
   };
 
   // 🖼️ Upload Color Image
@@ -155,6 +143,7 @@ const RawMaterialEntry: React.FC = () => {
       product_id: "",
       part_code: "",
       color_code: "",
+      color_name: "",
       color_image: "",
       quantity: 0,
       entry_by: "",
@@ -162,7 +151,6 @@ const RawMaterialEntry: React.FC = () => {
     setSelectedProduct(null);
     setSelectedPart(null);
     setColorImagePreview("");
-    setColorPreview("");
     setEditMode(false);
   };
 
@@ -173,10 +161,13 @@ const RawMaterialEntry: React.FC = () => {
 
     setSelectedProduct(prod || null);
     setSelectedPart(part || null);
-    setEntry(item);
-    setColorPreview(item.color_code || "");
+    setEntry({
+      ...item,
+      color_code: item.color_code || "",
+      color_name: item.color_name || "",
+    });
     setColorImagePreview(
-      item.color_image ? `data:image/png;base64,${item.color_image}` : ""
+      item.color_image ? getImageUrl(item.color_image) : ""
     );
     setEditMode(true);
     setActiveTab("entry");
@@ -288,25 +279,28 @@ const RawMaterialEntry: React.FC = () => {
               <h3>🎨 Material Specifications & Quantity</h3>
               
               <div className="form-row">
-                <div className="form-group color-input-group">
-                  <label>Color Swatch & Hex Code:</label>
-                  <div className="color-picker-wrapper">
-                    <input
-                      type="color"
-                      value={colorPreview || "#000000"}
-                      onChange={handleColorChange}
-                      className="color-input-dot"
-                    />
-                    <input
-                      type="text"
-                      placeholder="e.g. #ff0000 or red"
-                      value={entry.color_code || ""}
-                      onChange={handleManualColor}
-                      className="color-text-input"
-                    />
-                  </div>
+                <div className="form-group">
+                  <label>Color Code:</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. RD, BL, C1"
+                    value={entry.color_code || ""}
+                    onChange={(e) => setEntry({ ...entry, color_code: e.target.value })}
+                  />
                 </div>
 
+                <div className="form-group">
+                  <label>Color Name:</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Red, Blue, Gold"
+                    value={entry.color_name || ""}
+                    onChange={(e) => setEntry({ ...entry, color_name: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
                 <div className="form-group">
                   <label>Upload Color Image:</label>
                   <div className="file-upload-wrapper">
@@ -397,13 +391,12 @@ const RawMaterialEntry: React.FC = () => {
                 <div className="preview-row">
                   <div className="preview-block">
                     <span className="block-title">Selected Color</span>
-                    {entry.color_code || colorPreview ? (
+                    {entry.color_code || entry.color_name ? (
                       <div className="color-preview-block">
-                        <span
-                          className="color-preview-swatch"
-                          style={{ backgroundColor: colorPreview || entry.color_code }}
-                        ></span>
-                        <code className="color-hex">{entry.color_code || colorPreview}</code>
+                        <code className="color-hex">
+                          {entry.color_code}
+                          {entry.color_name ? ` (${entry.color_name})` : ""}
+                        </code>
                       </div>
                     ) : (
                       <span className="placeholder-text">No Color Specified</span>
@@ -486,21 +479,11 @@ const RawMaterialEntry: React.FC = () => {
                     <td>{products.find((p) => String(p._id || p.id || "") === String(e.product_id))?.product_code}</td>
                     <td>{e.part_code}</td>
                     <td>
-                      {e.color_code && (
-                        <>
-                          <span
-                            style={{
-                              backgroundColor: e.color_code,
-                              display: "inline-block",
-                              width: "20px",
-                              height: "20px",
-                              borderRadius: "4px",
-                              border: "1px solid #ccc",
-                              marginRight: "6px",
-                            }}
-                          ></span>
+                      {(e.color_code || e.color_name) && (
+                        <span>
                           {e.color_code}
-                        </>
+                          {e.color_name ? ` (${e.color_name})` : ""}
+                        </span>
                       )}
                     </td>
                     <td>
@@ -539,7 +522,7 @@ const RawMaterialEntry: React.FC = () => {
                         <button className="btn btn-edit" onClick={() => handleEdit(e)}>
                           ✏️ Edit
                         </button>
-                        <button className="btn btn-delete" onClick={() => handleDelete(e.id)}>
+                        <button className="btn btn-delete" onClick={() => handleDelete(e._id || e.id)}>
                           🗑️ Delete
                         </button>
                       </td>

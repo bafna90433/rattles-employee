@@ -5,6 +5,7 @@ import { getImageUrl } from "../utils/image";
 const PacketProductionEntries: React.FC = () => {
   const [entries, setEntries] = useState<any[]>([]);
   const [combinations, setCombinations] = useState<any[]>([]);
+  const [packets, setPackets] = useState<any[]>([]);
   const [previewModalImg, setPreviewModalImg] = useState<string | null>(null);
 
   // 🧭 Load all production entries + combinations
@@ -12,8 +13,10 @@ const PacketProductionEntries: React.FC = () => {
     (async () => {
       const e = await (window as any).electronAPI.getPacketProductions?.();
       const combos = await (window as any).electronAPI.getPacketCombinations?.();
+      const p = await (window as any).electronAPI.getPackets?.();
       setEntries(e || []);
       setCombinations(combos || []);
+      setPackets(p || []);
     })();
   }, []);
 
@@ -21,6 +24,11 @@ const PacketProductionEntries: React.FC = () => {
   const getSampleImage = (groupName: string) => {
     const combo = combinations.find((c: any) => c.group_name === groupName);
     return combo?.sample_image || "";
+  };
+
+  const getPacketImage = (packetCode: string) => {
+    const p = packets.find((item: any) => item.packet_code === packetCode);
+    return p?.packet_image || "";
   };
 
   return (
@@ -32,23 +40,44 @@ const PacketProductionEntries: React.FC = () => {
       ) : (
         <table>
           <thead>
-            <tr>
-              <th>Packet Code</th>
-              <th>Group Name</th>
-              <th>Sample Image</th>
-              <th>Quantity</th>
-              <th>Entry By</th>
-              <th>Date</th>
-            </tr>
+             <tr>
+               <th>Packet Code</th>
+               <th>Packet Image</th>
+               <th>Group Name</th>
+               <th>Sample Image</th>
+               <th>Quantity</th>
+               <th>Entry By</th>
+               <th>Date</th>
+             </tr>
           </thead>
 
           <tbody>
             {entries.map((entry, i) => {
               const imageBase64 = getSampleImage(entry.group_name);
               return (
-                <tr key={i}>
-                  <td>{entry.packet_code}</td>
-                  <td>{entry.group_name}</td>
+                 <tr key={i}>
+                   <td>{entry.packet_code}</td>
+                   <td>
+                     {getPacketImage(entry.packet_code) ? (
+                       <img
+                         src={getImageUrl(getPacketImage(entry.packet_code))}
+                         alt="Packet"
+                         width={50}
+                         height={50}
+                         className="clickable-thumbnail"
+                         onClick={() => setPreviewModalImg(getImageUrl(getPacketImage(entry.packet_code)))}
+                         style={{
+                           borderRadius: "8px",
+                           border: "1px solid #ddd",
+                           objectFit: "cover",
+                           background: "#fff",
+                         }}
+                       />
+                     ) : (
+                       "-"
+                     )}
+                   </td>
+                   <td>{entry.group_name}</td>
                   <td>
                     {imageBase64 ? (
                       <img

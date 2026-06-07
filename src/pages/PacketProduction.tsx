@@ -7,12 +7,19 @@ const PacketProduction: React.FC = () => {
   const [combinations, setCombinations] = useState<any[]>([]);
   const [entries, setEntries] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"entry" | "list">("entry");
+  const [previewModalImg, setPreviewModalImg] = useState<string | null>(null);
 
   const [selectedPacket, setSelectedPacket] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
   const [groupImage, setGroupImage] = useState<string>("");
   const [qty, setQty] = useState<number>(0);
   const [entryBy, setEntryBy] = useState("");
+
+  // Helper to fetch packet image from packets list
+  const getPacketImage = (code: string) => {
+    const packet = packets.find((p) => p.packet_code === code);
+    return packet?.packet_image ? getImageUrl(packet.packet_image) : "";
+  };
 
   // 🧭 Load all required data
   useEffect(() => {
@@ -282,6 +289,7 @@ const PacketProduction: React.FC = () => {
           <table className="product-table">
             <thead>
               <tr>
+                <th>Image</th>
                 <th>Packet</th>
                 <th>Group</th>
                 <th>Qty</th>
@@ -292,14 +300,35 @@ const PacketProduction: React.FC = () => {
             <tbody>
               {entries.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center", color: "#94a3b8" }}>
+                  <td colSpan={6} style={{ textAlign: "center", color: "#94a3b8" }}>
                     No entries found
                   </td>
                 </tr>
               ) : (
                 entries.map((e, i) => (
                   <tr key={i}>
-                    <td>{e.packet_code}</td>
+                    <td>
+                      {getPacketImage(e.packet_code) ? (
+                        <img
+                          src={getPacketImage(e.packet_code)}
+                          alt="Packet"
+                          width={44}
+                          height={44}
+                          className="clickable-thumbnail"
+                          onClick={() => setPreviewModalImg(getPacketImage(e.packet_code))}
+                          style={{
+                            borderRadius: "6px",
+                            border: "1px solid #cbd5e1",
+                            objectFit: "cover",
+                            backgroundColor: "#fff",
+                            cursor: "zoom-in"
+                          }}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td style={{ fontWeight: 600 }}>{e.packet_code}</td>
                     <td>{e.group_name}</td>
                     <td style={{ fontWeight: 600, color: "#059669" }}>{e.qty}</td>
                     <td>{e.entry_by}</td>
@@ -309,6 +338,16 @@ const PacketProduction: React.FC = () => {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* 🖼️ Global Zoom Preview Modal */}
+      {previewModalImg && (
+        <div className="image-preview-modal-overlay" onClick={() => setPreviewModalImg(null)}>
+          <div className="image-preview-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-preview-modal" onClick={() => setPreviewModalImg(null)}>✕</button>
+            <img src={previewModalImg} alt="Large Preview" />
+          </div>
         </div>
       )}
     </div>
