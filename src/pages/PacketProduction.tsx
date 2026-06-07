@@ -623,6 +623,7 @@ const PacketProduction: React.FC = () => {
             <table className="product-table">
               <thead>
                 <tr>
+                  <th>Image</th>
                   <th>Time</th>
                   <th>Packet Code</th>
                   <th>Packet Name</th>
@@ -637,13 +638,34 @@ const PacketProduction: React.FC = () => {
               <tbody>
                 {entries.length === 0 ? (
                   <tr>
-                    <td colSpan={9} style={{ textAlign: "center", color: "#94a3b8" }}>
+                    <td colSpan={10} style={{ textAlign: "center", color: "#94a3b8" }}>
                       No assembly runs recorded yet.
                     </td>
                   </tr>
                 ) : (
                   entries.map((e, i) => (
                     <tr key={i}>
+                      <td>
+                        {getPacketImage(e.packet_code) ? (
+                          <img
+                            src={getPacketImage(e.packet_code)}
+                            alt="Packet"
+                            width={44}
+                            height={44}
+                            className="clickable-thumbnail"
+                            onClick={() => setPreviewModalImg(getPacketImage(e.packet_code))}
+                            style={{
+                              borderRadius: "6px",
+                              border: "1px solid #cbd5e1",
+                              objectFit: "cover",
+                              backgroundColor: "#fff",
+                              cursor: "zoom-in"
+                            }}
+                          />
+                        ) : (
+                          "-"
+                        )}
+                      </td>
                       <td>{new Date(e.date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</td>
                       <td><code>{e.packet_code}</code></td>
                       <td className="font-semibold">{e.packet_code} Rattle Packet</td>
