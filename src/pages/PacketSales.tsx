@@ -347,21 +347,13 @@ const PacketSales: React.FC = () => {
                 <div className="dispatch-form-grid" style={{ gridTemplateColumns: "1fr" }}>
                   <div className="dispatch-field-group">
                     <label>Operator Name *</label>
-                    <select
+                    <input
+                      type="text"
                       value={entryBy}
                       onChange={(e) => setEntryBy(e.target.value)}
-                    >
-                      <option value="">-- Select Operator --</option>
-                      <option value="RISHI KUMAR (OP-0147)">RISHI KUMAR (OP-0147)</option>
-                      <option value="AMIT SHARMA (OP-0122)">AMIT SHARMA (OP-0122)</option>
-                      {localStorage.getItem("username") &&
-                        localStorage.getItem("username") !== "RISHI KUMAR (OP-0147)" &&
-                        localStorage.getItem("username") !== "AMIT SHARMA (OP-0122)" && (
-                          <option value={localStorage.getItem("username") || ""}>
-                            {localStorage.getItem("username")}
-                          </option>
-                        )}
-                    </select>
+                      placeholder="Enter operator name"
+                      required
+                    />
                   </div>
 
                   <div className="fifo-callout" style={{ gridColumn: "span 1" }}>
