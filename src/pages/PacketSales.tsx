@@ -21,6 +21,9 @@ const PacketSales: React.FC = () => {
     type: "",
   });
 
+  // Wizard active step state (1, 2, or 3)
+  const [activeStep, setActiveStep] = useState(1);
+
   // 🧭 Load packet stock + sales
   const loadData = async () => {
     try {
@@ -56,7 +59,7 @@ const PacketSales: React.FC = () => {
       return;
     }
     if (!entryBy.trim()) {
-      showMessage("⚠️ Please select an operator name!", "error");
+      showMessage("⚠️ Please enter operator name!", "error");
       return;
     }
     if (!isStockAvailable) {
@@ -104,34 +107,30 @@ const PacketSales: React.FC = () => {
     setSelectedGroup("");
     setQty(0);
     setEntryBy(localStorage.getItem("username") || "RISHI KUMAR (OP-0147)");
+    setActiveStep(1);
   };
-
-  const getCurrentStep = () => {
-    if (!selectedPacket) return 1;
-    if (!isStockAvailable) return 2;
-    return 3;
-  };
-
-  const currentStep = getCurrentStep();
 
   const steps = [
     {
       num: 1,
       title: "Select Ready Packet",
       desc: "Choose a packet to dispatch",
-      done: !!selectedPacket,
+      active: activeStep === 1,
+      done: activeStep > 1,
     },
     {
       num: 2,
       title: "Confirm Stock",
       desc: "Check availability & qty",
-      done: !!selectedPacket && isStockAvailable,
+      active: activeStep === 2,
+      done: activeStep > 2,
     },
     {
       num: 3,
       title: "Complete Sale",
       desc: "Select operator & dispatch",
-      done: !!selectedPacket && isStockAvailable && !!entryBy.trim(),
+      active: activeStep === 3,
+      done: activeStep > 3,
     },
   ];
 
@@ -218,12 +217,19 @@ const PacketSales: React.FC = () => {
           {/* Column 1: Progress Stepper */}
           <div className="dispatch-stepper">
             {steps.map((step) => {
-              const isActive = currentStep === step.num;
+              const isActive = activeStep === step.num;
               const isCompleted = step.done && !isActive;
+              const isSelectable = step.num < activeStep || (step.num === 2 && selectedPacket) || (step.num === 3 && selectedPacket && isStockAvailable);
               return (
                 <div
                   key={step.num}
                   className={`stepper-step-sales ${isActive ? "active" : ""} ${isCompleted ? "completed" : ""}`}
+                  onClick={() => {
+                    if (isSelectable) {
+                      setActiveStep(step.num);
+                    }
+                  }}
+                  style={{ cursor: isSelectable ? "pointer" : "default" }}
                 >
                   <div className="step-circle-sales">{step.num}</div>
                   <div className="step-text">
@@ -237,8 +243,8 @@ const PacketSales: React.FC = () => {
 
           {/* Column 2: Form Section cards */}
           <div className="dispatch-main-column">
-            {/* Panel 1: Ready Packet Selection */}
-            <div className="dispatch-card">
+            {/* Panel 1: Ready Packet Selection & Quantity */}
+            <div className="dispatch-card" style={{ opacity: activeStep <= 2 ? 1 : 0.7 }}>
               <div className="card-header">
                 <h3>1. Select Ready Packet</h3>
               </div>
@@ -260,7 +266,7 @@ const PacketSales: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="sales-info-box">
+                  <div className="sales-info-box" style={{ pointerEvents: activeStep === 1 ? "auto" : "none", opacity: activeStep === 1 ? 1 : 0.8 }}>
                     <div className="dispatch-form-grid" style={{ gap: "12px" }}>
                       <div className="dispatch-field-group">
                         <label>Packet Code *</label>
@@ -279,6 +285,7 @@ const PacketSales: React.FC = () => {
                               setQty(0);
                             }
                           }}
+                          disabled={activeStep !== 1}
                         >
                           <option value="">-- Select Packet --</option>
                           {packets.map((p, i) => (
@@ -318,7 +325,7 @@ const PacketSales: React.FC = () => {
                   </div>
 
                   {/* Quantity Stepper selector */}
-                  <div className="qty-stepper-sales-panel">
+                  <div className="qty-stepper-sales-panel" style={{ pointerEvents: activeStep === 2 ? "auto" : "none", opacity: activeStep === 2 ? 1 : 0.6 }}>
                     <label>Sale Quantity *</label>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "4px" }}>
                       <button
@@ -326,7 +333,7 @@ const PacketSales: React.FC = () => {
                         className="sales-change-btn"
                         style={{ fontSize: "20px", padding: 0, width: "36px", height: "36px", display: "grid", placeItems: "center" }}
                         onClick={() => setQty((prev) => Math.max(1, prev - 1))}
-                        disabled={!selectedPacket}
+                        disabled={!selectedPacket || activeStep !== 2}
                       >
                         -
                       </button>
@@ -347,7 +354,7 @@ const PacketSales: React.FC = () => {
                           borderRadius: "6px",
                           outline: "none"
                         }}
-                        disabled={!selectedPacket}
+                        disabled={!selectedPacket || activeStep !== 2}
                         min={1}
                       />
                       <button
@@ -355,7 +362,7 @@ const PacketSales: React.FC = () => {
                         className="sales-change-btn"
                         style={{ fontSize: "20px", padding: 0, width: "36px", height: "36px", display: "grid", placeItems: "center" }}
                         onClick={() => setQty((prev) => prev + 1)}
-                        disabled={!selectedPacket}
+                        disabled={!selectedPacket || activeStep !== 2}
                       >
                         +
                       </button>
@@ -365,11 +372,48 @@ const PacketSales: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Step navigation for Card 1 */}
+                {activeStep === 1 && (
+                  <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                    <button
+                      type="button"
+                      className="sales-change-btn"
+                      style={{ padding: "8px 16px", background: "#ea580c", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600 }}
+                      onClick={() => setActiveStep(2)}
+                      disabled={!selectedPacket}
+                    >
+                      Next Step →
+                    </button>
+                  </div>
+                )}
+
+                {activeStep === 2 && (
+                  <div style={{ marginTop: "16px", display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                    <button
+                      type="button"
+                      className="sales-change-btn"
+                      style={{ padding: "8px 16px" }}
+                      onClick={() => setActiveStep(1)}
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="button"
+                      className="sales-change-btn"
+                      style={{ padding: "8px 16px", background: "#ea580c", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600 }}
+                      onClick={() => setActiveStep(3)}
+                      disabled={!isStockAvailable}
+                    >
+                      Next Step →
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Panel 2: Operator Details */}
-            <div className="dispatch-card">
+            <div className="dispatch-card" style={{ opacity: activeStep === 3 ? 1 : 0.6, pointerEvents: activeStep === 3 ? "auto" : "none" }}>
               <div className="card-header">
                 <h3>Operator Information</h3>
               </div>
@@ -383,6 +427,7 @@ const PacketSales: React.FC = () => {
                       onChange={(e) => setEntryBy(e.target.value)}
                       placeholder="Enter operator name"
                       required
+                      disabled={activeStep !== 3}
                     />
                   </div>
 
@@ -390,11 +435,25 @@ const PacketSales: React.FC = () => {
                     <MdOutlineInfo style={{ fontSize: "16px", flexShrink: 0 }} />
                     <span>FIFO will be applied automatically. Oldest packets will be dispatched first.</span>
                   </div>
+
+                  {/* Step navigation for Card 2 */}
+                  {activeStep === 3 && (
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "12px" }}>
+                      <button
+                        type="button"
+                        className="sales-change-btn"
+                        style={{ padding: "8px 16px" }}
+                        onClick={() => setActiveStep(2)}
+                      >
+                        ← Back
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Bottom Back Button */}
+            {/* Bottom Back to Dashboard Button */}
             <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-start" }}>
               <button
                 onClick={() => navigate("/employee/dashboard")}
@@ -526,7 +585,7 @@ const PacketSales: React.FC = () => {
                 <button
                   className="btn btn-save"
                   onClick={handleSave}
-                  disabled={loading || !selectedPacket || qty <= 0 || !entryBy.trim() || !isStockAvailable}
+                  disabled={loading || !selectedPacket || qty <= 0 || !entryBy.trim() || !isStockAvailable || activeStep !== 3}
                 >
                   <MdCheck style={{ fontSize: "18px" }} />
                   {loading ? "Processing..." : "Complete Dispatch"}
