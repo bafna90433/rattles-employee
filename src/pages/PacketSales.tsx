@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/PacketSales.css";
 import "../styles/EmployeeWorkflow.css";
 import { getImageUrl } from "../utils/image";
-import { MdOutlineInfo, MdCheck, MdRefresh } from "react-icons/md";
+import { MdOutlineInfo, MdCheck, MdRefresh, MdArrowBack } from "react-icons/md";
 
 const PacketSales: React.FC = () => {
+  const navigate = useNavigate();
   const [packets, setPackets] = useState<any[]>([]);
   const [sales, setSales] = useState<any[]>([]);
   const [selectedPacket, setSelectedPacket] = useState("");
@@ -148,6 +150,34 @@ const PacketSales: React.FC = () => {
       {/* Page Header */}
       <div className="packet-dispatch-header">
         <div className="header-brand-block">
+          <button
+            onClick={() => navigate("/employee/dashboard")}
+            style={{
+              background: "transparent",
+              border: "1px solid #cbd5e1",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#475569",
+              marginRight: "8px",
+              transition: "all 0.15s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "#f1f5f9";
+              e.currentTarget.style.color = "#0f172a";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = "#475569";
+            }}
+          >
+            <MdArrowBack /> Back
+          </button>
           <div className="brand-badge-sales">
             🚚
           </div>
