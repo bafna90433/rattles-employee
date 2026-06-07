@@ -611,18 +611,13 @@ const PacketProduction: React.FC = () => {
       )}
 
       {/* 📋 Ledger History List View */}
-      {(activeTab === "list" || activeTab === "entry") && (
+      {activeTab === "list" && (
         <div className="packet-recent-assembly-ledger">
           <div className="ledger-head">
             <div>
-              <h3>Recent Packet Assembly Runs</h3>
-              <p>Latest completed production runs</p>
+              <h3>Packet Assembly History Logs</h3>
+              <p>All completed production runs</p>
             </div>
-            {activeTab === "entry" && (
-              <button className="view-history-link" onClick={() => setActiveTab("list")}>
-                View all history →
-              </button>
-            )}
           </div>
           <div className="ledger-scroll">
             <table className="product-table">
@@ -647,7 +642,7 @@ const PacketProduction: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  (activeTab === "entry" ? entries.slice(0, 5) : entries).map((e, i) => (
+                  entries.map((e, i) => (
                     <tr key={i}>
                       <td>{new Date(e.date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</td>
                       <td><code>{e.packet_code}</code></td>
