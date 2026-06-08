@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const EmployeeLogin: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -17,14 +18,14 @@ const EmployeeLogin: React.FC = () => {
 
       if (res.success) {
         localStorage.setItem("role", "employee");
-        alert("✅ Login successful!");
+        toast.success("Login successful!");
         navigate("/employee/dashboard");
       } else {
-        alert(res.message || "❌ Invalid credentials");
+        toast.error(res.message || "Invalid credentials");
       }
     } catch (err) {
       console.error("⚠️ Login error:", err);
-      alert("⚠️ Something went wrong.");
+      toast.error("Something went wrong.");
     }
   };
 

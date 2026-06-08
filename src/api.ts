@@ -170,4 +170,9 @@ export const api = {
     const res = await apiInstance.get("/packet-sales");
     return res.data;
   },
+
+  getDashboardSettings: async () => {
+    const res = await apiInstance.get("/dashboard-settings");
+    return res.data;
+  },
 };

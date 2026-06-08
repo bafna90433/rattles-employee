@@ -14,6 +14,8 @@ import EmployeeDashboard from "./pages/EmployeeDashboard";
 // 🔐 Login
 import EmployeeLogin from "./pages/EmployeeLogin";
 
+import { Toaster } from "react-hot-toast";
+
 // 🔒 Protected Route
 const ProtectedRoute: React.FC<{ allowedRoles: string[]; children: React.ReactNode }> = ({
   allowedRoles,
@@ -26,6 +28,7 @@ const ProtectedRoute: React.FC<{ allowedRoles: string[]; children: React.ReactNo
 const App: React.FC = () => {
   return (
     <Router>
+      <Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 4000, style: { fontFamily: 'Inter, system-ui, sans-serif', fontSize: '14px', fontWeight: 600 } }} />
       <Routes>
         {/* Employee Login at Root */}
         <Route path="/" element={<EmployeeLogin />} />

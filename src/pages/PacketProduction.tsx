@@ -69,6 +69,13 @@ const PacketProduction: React.FC = () => {
     (c) => c.packet_code === selectedPacket && c.group_name === selectedGroup
   );
 
+  const getComboImage = (productCode: string) => {
+    const toyCombo = toyCombinations.find(
+      (tc) => tc.product_code === productCode || tc.combo_name === productCode
+    );
+    return toyCombo?.sample_image ? getImageUrl(toyCombo.sample_image) : "";
+  };
+
   // 🖼️ When group selected → show sample image
   const handleGroupSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const groupName = e.target.value;
@@ -137,11 +144,6 @@ const PacketProduction: React.FC = () => {
     }
     return true;
   };
-
-  // Calculate packaging stock totals dynamically with fallback values
-  const pcStock = rawStock.filter(rs => rs.part_code.startsWith("PC")).reduce((sum, item) => sum + item.total_qty, 0) || 950;
-  const blStock = rawStock.filter(rs => rs.part_code.startsWith("BL")).reduce((sum, item) => sum + item.total_qty, 0) || 950;
-  const stStock = rawStock.filter(rs => rs.part_code.startsWith("ST")).reduce((sum, item) => sum + item.total_qty, 0) || 5000;
 
   return (
     <div className="packet-production-container">
@@ -384,6 +386,7 @@ const PacketProduction: React.FC = () => {
                       <thead>
                         <tr>
                           <th>#</th>
+                          <th>Image</th>
                           <th>Component / Product</th>
                           <th>Code</th>
                           <th>Specification</th>
@@ -399,6 +402,7 @@ const PacketProduction: React.FC = () => {
                           const displayName = toyCombo ? toyCombo.combo_name : `${prodCode} Rattle`;
                           const stockItem = producedProducts.find(pp => pp.product_code === prodCode);
                           const available = stockItem ? stockItem.total_qty : 0;
+                          const comboImage = getComboImage(prodCode);
                           
                           // specifications list from parts colors
                           const specs = toyCombo?.parts
@@ -410,6 +414,18 @@ const PacketProduction: React.FC = () => {
                           return (
                             <tr key={`toy-${idx}`}>
                               <td>{idx + 1}</td>
+                              <td>
+                                {comboImage ? (
+                                  <img
+                                    src={comboImage}
+                                    alt={displayName}
+                                    className="bom-product-thumb clickable-thumbnail"
+                                    onClick={() => setPreviewModalImg(comboImage)}
+                                  />
+                                ) : (
+                                  <div className="bom-product-thumb bom-product-thumb-placeholder">-</div>
+                                )}
+                              </td>
                               <td className="font-semibold">{displayName}</td>
                               <td><code>{prodCode}</code></td>
                               <td>{specs}</td>
@@ -421,35 +437,6 @@ const PacketProduction: React.FC = () => {
                             </tr>
                           );
                         })}
-                        
-                        {/* 2. Packaging Materials List */}
-                        <tr>
-                          <td>{(activeCombo?.products?.length || 0) + 1}</td>
-                          <td className="font-semibold">Packet Card</td>
-                          <td><code>PC-{selectedPacket}</code></td>
-                          <td>Printed Card</td>
-                          <td>1</td>
-                          <td className="text-success-stock">{pcStock.toLocaleString()}</td>
-                          <td>pcs</td>
-                        </tr>
-                        <tr>
-                          <td>{(activeCombo?.products?.length || 0) + 2}</td>
-                          <td className="font-semibold">Blister Cover</td>
-                          <td><code>BL-{selectedPacket}</code></td>
-                          <td>Transparent</td>
-                          <td>1</td>
-                          <td className="text-success-stock">{blStock.toLocaleString()}</td>
-                          <td>pcs</td>
-                        </tr>
-                        <tr>
-                          <td>{(activeCombo?.products?.length || 0) + 3}</td>
-                          <td className="font-semibold">Staple Wire / Staples</td>
-                          <td><code>ST-01</code></td>
-                          <td>Metal Pins</td>
-                          <td>2</td>
-                          <td className="text-success-stock">{stStock.toLocaleString()}</td>
-                          <td>pcs</td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -556,18 +543,6 @@ const PacketProduction: React.FC = () => {
                             </div>
                           );
                         })}
-                        <div className="consumed-row">
-                          <span>Packet Card (PC-{selectedPacket})</span>
-                          <strong>{qty * 1} pcs</strong>
-                        </div>
-                        <div className="consumed-row">
-                          <span>Blister Cover (BL-{selectedPacket})</span>
-                          <strong>{qty * 1} pcs</strong>
-                        </div>
-                        <div className="consumed-row">
-                          <span>Staples (ST-01)</span>
-                          <strong>{qty * 2} pcs</strong>
-                        </div>
                       </div>
                     </div>
                   </>
